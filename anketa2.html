@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Экран анкеты — вариант 2</title>
+<style>
+  /* ====== Стиль (яркий / креативный) ====== */
+  :root{
+    --bg1:#0ea5e9; --bg2:#8b5cf6; --card:#0b1220aa; --accent:#22d3ee; --accent2:#a78bfa;
+    --text:#e5e7eb; --muted:#94a3b8; --ok:#22c55e; --bad:#ef4444;
+    --radius:18px; --gap:14px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; min-height:100svh; color:var(--text);
+    background: linear-gradient(135deg,var(--bg1),var(--bg2)) fixed;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    display:grid; place-items:center; padding:28px;
+  }
+  .card{
+    width:min(860px,100%); backdrop-filter: blur(10px);
+    background: var(--card); border:1px solid #ffffff2a;
+    border-radius: var(--radius); padding:28px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.35);
+  }
+  h1{ margin:0 0 6px; font-size:26px; letter-spacing:.3px }
+  p.lead{ margin:0 0 18px; color:var(--muted) }
+
+  .grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap:var(--gap) }
+  .field{ display:flex; flex-direction:column; gap:8px; margin-bottom:var(--gap) }
+  label{ font-weight:700; letter-spacing:.2px }
+  input[type="text"], input[type="tel"], input[type="number"]{
+    padding:12px 14px; border-radius:12px; border:1px solid #ffffff26; background:#0b1220e6; color:var(--text);
+    outline:none; transition: border-color .2s, box-shadow .2s, color .2s;
+  }
+  input:focus{ border-color:var(--accent); box-shadow:0 0 0 3px #22d3ee33 }
+  .hint{ color:var(--muted); font-size:12px }
+
+  /* Slider с пузырьком значения */
+  .age-wrap{ display:grid; grid-template-columns: 1fr 130px; gap:var(--gap); align-items:center }
+  input[type="range"]{ width:100% }
+  .bubble{
+    display:inline-block; min-width:56px; text-align:center; padding:8px 10px;
+    border-radius:12px; background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#0b1220; font-weight:800;
+  }
+
+  /* Радиокнопки (кастом) */
+  .radios{ display:flex; gap:14px; flex-wrap:wrap }
+  .radio{
+    position:relative; padding:10px 14px 10px 38px; border-radius:999px; cursor:pointer;
+    background:#111827aa; border:1px solid #ffffff26; user-select:none;
+    transition: transform .1s, border-color .2s;
+  }
+  .radio:hover{ transform: translateY(-1px) }
+  .radio input{ position:absolute; opacity:0; inset:0 }
+  .dot{
+    position:absolute; left:10px; top:50%; translate:0 -50%;
+    height:18px; width:18px; border-radius:50%; border:2px solid var(--accent); box-shadow: inset 0 0 0 4px transparent; transition:.2s;
+  }
+  .radio input:checked ~ .dot{ box-shadow: inset 0 0 0 6px var(--accent); border-color:var(--accent2) }
+  .radio input:focus-visible ~ .dot{ outline:3px solid #22d3ee55; outline-offset:2px }
+
+  /* Switch */
+  .switch{ position:relative; width:62px; height:34px; }
+  .switch input{ display:none }
+  .track{
+    position:absolute; inset:0; background:#374151; border-radius:999px; border:1px solid #ffffff26; transition:.2s;
+  }
+  .thumb{
+    position:absolute; height:28px; width:28px; top:3px; left:3px; border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    box-shadow:0 6px 18px rgba(0,0,0,.35); transition:.25s cubic-bezier(.2,.8,.2,1);
+  }
+  .switch input:checked ~ .track{ background:#10b98166; border-color:#10b981aa }
+  .switch input:checked ~ .thumb{ left:31px }
+
+  /* Buttons */
+  .actions{ margin-top:18px; display:flex; gap:12px; align-items:center; flex-wrap:wrap }
+  button{
+    padding:12px 18px; border:none; border-radius:14px; color:#0b1220; font-weight:800; letter-spacing:.3px; cursor:pointer;
+    background: linear-gradient(135deg,var(--accent),var(--accent2));
+    box-shadow: 0 14px 30px #0000003a; transition: transform .08s ease;
+  }
+  button:disabled{ filter:grayscale(.6) brightness(.7); cursor:not-allowed; box-shadow:none }
+  button:active{ transform: translateY(1px) }
+
+  /* Layout niceties */
+  .row{ display:flex; gap:12px; align-items:center; flex-wrap:wrap }
+  .divider{ height:1px; background:#ffffff22; margin:18px 0 }
+</style>
+</head>
+<body>
+  <section class="card">
+    <h1>Домашнее задание: «Экран анкеты»</h1>
+    <p class="lead">Заполните поля ниже. Кнопка «Отправить» станет активной только после согласия с условиями.</p>
+
+    <form id="form" onsubmit="event.preventDefault(); alert('Спасибо! Форма отправлена ✨');">
+      <div class="grid-2">
+        <div class="field">
+          <label for="lastName">Фамилия</label>
+          <input id="lastName" type="text" placeholder="Иванов">
+        </div>
+        <div class="field">
+          <label for="firstName">Имя</label>
+          <input id="firstName" type="text" placeholder="Иван">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="middleName">Отчество</label>
+        <input id="middleName" type="text" placeholder="Иванович">
+      </div>
+
+      <div class="field">
+        <label>Возраст</label>
+        <div class="age-wrap">
+          <div class="row">
+            <input id="ageRange" type="range" min="0" max="120" value="20" step="1" aria-label="Возраст (ползунок)">
+            <span id="ageBubble" class="bubble">20</span>
+          </div>
+          <input id="ageNumber" type="number" min="0" max="120" value="20" step="1" aria-label="Возраст (число)">
+        </div>
+        <div class="hint">Ползунок и счётчик синхронизированы.</div>
+      </div>
+
+      <div class="field">
+        <label for="phone">Номер телефона</label>
+        <input id="phone" type="tel" placeholder="Например: 79991234567">
+        <div class="hint">Текст красный, а при длине ровно 11 символов становится зелёным.</div>
+      </div>
+
+      <div class="field">
+        <label>Пол</label>
+        <div class="radios">
+          <label class="radio">
+            <input type="radio" name="gender" value="male">
+            <span class="dot"></span> Мужской
+          </label>
+          <label class="radio">
+            <input type="radio" name="gender" value="female">
+            <span class="dot"></span> Женский
+          </label>
+          <label class="radio">
+            <input type="radio" name="gender" value="other">
+            <span class="dot"></span> Другое
+          </label>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field">
+        <label for="tos">Согласие с условиями</label>
+        <div class="row">
+          <label class="switch" title="Согласен с условиями">
+            <input id="tos" type="checkbox">
+            <span class="track"></span>
+            <span class="thumb"></span>
+          </label>
+          <span class="hint">Включите переключатель, чтобы разблокировать кнопку.</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="submitBtn" type="submit" disabled>Отправить 🚀</button>
+        <span class="hint">Все поля имеют заголовки — как требуется.</span>
+      </div>
+    </form>
+  </section>
+
+<script>
+  // Возраст: синхронизация и пузырёк
+  const ageRange  = document.getElementById('ageRange');
+  const ageNumber = document.getElementById('ageNumber');
+  const ageBubble = document.getElementById('ageBubble');
+
+  function setAge(v){
+    const val = Math.max(0, Math.min(120, Number(v||0)));
+    ageRange.value  = val;
+    ageNumber.value = val;
+    ageBubble.textContent = val;
+  }
+  ageRange.addEventListener('input', e => setAge(e.target.value));
+  ageNumber.addEventListener('input', e => setAge(e.target.value));
+  setAge(ageRange.value);
+
+  // Телефон: 11 символов — зелёный, иначе красный
+  const phone = document.getElementById('phone');
+  function phoneColor(){
+    const len = phone.value.replace(/\s+/g,'').length;
+    phone.style.color = (len === 11) ? 'var(--ok)' : 'var(--bad)';
+  }
+  phone.addEventListener('input', phoneColor);
+  phoneColor();
+
+  // Кнопка Отправить: активна только при согласии
+  const tos = document.getElementById('tos');
+  const submitBtn = document.getElementById('submitBtn');
+  function updateSubmit(){ submitBtn.disabled = !tos.checked; }
+  tos.addEventListener('change', updateSubmit);
+  updateSubmit();
+</script>
+</body>
+</html>
